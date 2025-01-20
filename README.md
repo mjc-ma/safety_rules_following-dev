@@ -8,4 +8,4 @@ conda activate safety_rules_following-dev
 pip install torch==2.1.0 --index-url https://download.pytorch.org/whl/cu118
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r requirements.txt# safety_rules_following-dev
