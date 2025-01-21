@@ -12,7 +12,8 @@ import json
 import os
 cls_mapping = {
     "mm-safety-bench": "MMSafetyBenchDataset",
-    "llama-3-2-chat": "LlamaChat",
+    "llava-1.5-7b-hf": "LLaVAHFChat",
+    "llama-3-2-chat":"LlamaChat",
 }
 batch_size = 1
 
@@ -48,17 +49,17 @@ class BaseTask(ABC):
             model = model_cls(self.reason_model_id)
         return model
 
-    def get_dataset(self,follow_rules: bool, danger: str) -> BaseDataset:
+    def get_dataset(self,follow_rules: bool, long_pipe: bool, danger: str) -> BaseDataset:
         dataset_cls = datasets_module.__dict__[cls_mapping[self.dataset_id]]
         # breakpoint()
         if follow_rules == True:
             dataset = dataset_cls(
-                self.dataset_id, follow_rules, self.safety_rules, danger
+                self.dataset_id, follow_rules, long_pipe, self.safety_rules, danger
         )
             # breakpoint()
         else:
             dataset = dataset_cls(
-                self.dataset_id, follow_rules, self.safety_rules, danger
+                self.dataset_id, follow_rules, long_pipe, self.safety_rules, danger
         )
         # breakpoint()
         return dataset
@@ -144,7 +145,7 @@ class BaseTask(ABC):
         return responses
 
     def pipeline(self) -> None:
-        self.follow_dataset = self.get_dataset(follow_rules=True,danger=None)
+        self.follow_dataset = self.get_dataset(follow_rules=True,long_pipe = True, danger=None)
         follow_dataloader = self.get_dataloader(self.follow_dataset)
         self.follow_model = self.get_model(follow_rules=True)
         print("Start safety-aware rationale generating....")
@@ -158,6 +159,19 @@ class BaseTask(ABC):
         final_responses = self.generate(reason_dataloader, **self.generation_kwargs)
         print("Reasoning end, start evaluating...")
         
+        self.evaluators = self.get_evaluators()
+        results = self.eval(final_responses)
+        self.save_results(final_responses)
+    
+    def pipeline_ref(self) -> None:
+        self.follow_rules = False
+        self.reason_dataset = self.get_dataset(follow_rules=True,long_pipe = False,danger = None)
+        reason_dataloader = self.get_dataloader(self.reason_dataset)
+        #short_pipe by follow_model(follow_rules=True) or reason_model(follow_rules=False)?
+        self.reason_model = self.get_model(follow_rules=True)
+        print("Start to generate the response directly without reasoning....")
+        final_responses=self.generate(reason_dataloader, **self.generation_kwargs)
+        print("Reasoning end, start evaluating...")
         self.evaluators = self.get_evaluators()
         results = self.eval(final_responses)
         self.save_results(final_responses)

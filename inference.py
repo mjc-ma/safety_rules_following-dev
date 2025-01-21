@@ -22,7 +22,7 @@ class TaskArguments:
 
 @dataclass
 class InferenceArguments:
-    output_dir:     str = "results/model:LLaMA-3-2-chat/task:mm-safety_bench/categories:01-Illegal_Activitiy"
+    output_dir:     str = "results/model:llama-3-2-chat/task:mm-safety_bench/categories:01-Illegal_Activitiy"
 
 
 def inference():
@@ -36,7 +36,10 @@ def inference():
     evaluator_seq_cfgs = task_cfg.evaluator_seq_cfgs
     # breakpoint()
     runner = BaseTask(dataset_id=task_args.dataset_id,follow_model_id=model_args.follow_model_id,reason_model_id=model_args.reason_model_id,follow_rules=task_args.follow_rules,safety_rules=safety_rules,dataset_categories=task_args.dataset_categories,generation_kwargs=generation_kwargs, log_file=log_file, evaluator_seq_cfgs=evaluator_seq_cfgs)
-    runner.pipeline()
+    #for long_pipeline
+    #runner.pipeline()
+    #for short_pipeline
+    runner.pipeline_ref()
     
 if __name__ == "__main__":
     inference()
