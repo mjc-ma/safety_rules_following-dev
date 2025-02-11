@@ -18,11 +18,11 @@ class TaskArguments:
     task_config_path:   str = "configs/task_config.yaml"
     dataset_id: str = "mm-safety-bench"
     follow_rules: bool = True
-    dataset_categories: str = "01-Illegal_Activity"
+    dataset_categories: str = "13-Gov_Decision"
 
 @dataclass
 class InferenceArguments:
-    output_dir:     str = "results/model:llama-3-2-chat/task:mm-safety_bench/categories:01-Illegal_Activitiy"
+    output_dir:     str = "results/model:llama-3-2-chat/task:mm-safety_bench/categories:13-Gov_Decision"
 
 
 def inference():

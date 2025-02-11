@@ -9,6 +9,7 @@ from models.base import BaseChat
 import numpy as np
 import warnings
 import json
+from typing import List, Dict, Any
 import os
 cls_mapping = {
     "mm-safety-bench": "MMSafetyBenchDataset",
@@ -110,39 +111,104 @@ class BaseTask(ABC):
             with open(self.log_file, "w") as f:
                 json.dump(formatted_results, f, indent=4)
 
-    def generate(
-        self, dataloader: DataLoader, **generate_kwargs
-    ) -> List[Dict[str, Any]]:
-        print("len(self.dataset): ", len(dataloader.dataset))
-        responses = []
-        for batch_data in dataloader:
-            for data in batch_data:
-                """
-                # for multimodal data
-                message = [
-                    {
-                        "role": "user",
-                        "content": {
-                            "image_path": ...,
-                            "text": ...
-                        }
-                    }
-                ]
-                """
-                message = data["message"]
-                if self.follow_rules == True:
-                    response = self.follow_model.chat(messages=message, **generate_kwargs)
-                else :
-                    response = self.reason_model.chat(messages=message, **generate_kwargs)
+    # def generate_old(
+    #     self, dataloader: DataLoader, **generate_kwargs
+    # ) -> List[Dict[str, Any]]:
+    #     print("len(self.dataset): ", len(dataloader.dataset))
+    #     responses = []
+    #     for batch_data in dataloader:
+    #         for data in batch_data:
+    #             """
+    #             # for multimodal data
+    #             message = [
+    #                 {
+    #                     "role": "user",
+    #                     "content": {
+    #                         "image_path": ...,
+    #                         "text": ...
+    #                     }
+    #                 }
+    #             ]
+    #             """
+    #             message = data["message"]
+    #             flag = 1
+    #             if self.follow_rules == True:
+    #                 response = self.follow_model.chat(messages=message, **generate_kwargs)
+    #             else :
+    #                 response = self.reason_model.chat(messages=message, **generate_kwargs)
+    #                 flag = 0
 
-                output = {
-                    "content": message[0]["content"],
-                    "response": response.content,
-                }
-                # breakpoint()
-                print("output:", output)
-                responses.append(output)
-        return responses
+    #             output = {
+    #                 "content": message[0]["content"],
+    #                 "response": response.content,
+    #             }
+    #             # breakpoint()
+    #             #print("output:", output)
+    #             responses.append(output)
+    #     return responses
+  
+    def generate(
+            self, dataloader: DataLoader,  **generate_kwargs
+        ) -> List[Dict[str, Any]]:
+            print("len(self.dataset): ", len(dataloader.dataset))
+            responses = []
+            #修改下面的变量
+            json_path = "/mnt/petrelfs/fanyuyu/safety_rules_following-dev/data/processed_questions_new/13-Gov_Decision.json"
+            # 加载现有JSON数据
+            with open(json_path, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+
+            question_id = 0
+
+            for batch_data in dataloader:
+                for data in batch_data:
+                    message = data["message"]
+                    flag = 1
+                    
+                    # 获取当前问题的ID
+                    #question_id = str(data["question_id"])  # 假设data包含question_id字段
+                    print(self.follow_rules)
+                    if self.follow_rules:
+                        print("Yessss")
+                        response = self.follow_model.chat(messages=message, **generate_kwargs)
+                    else:
+                        print("\n")
+                        print("hello")
+                        print("\n")
+                        response = self.reason_model.chat(messages=message, **generate_kwargs)
+                        flag = 0
+
+                    output = {
+                        "content": message[0]["content"],
+                        "response": response.content,
+                    }
+
+                    if flag == 0:
+                        # 更新JSON数据
+                        question_id = str(question_id)
+                        print("aaaaaaaaaaaaaaaaaa")
+                        print(question_id)
+                        print("////////////////")
+                        if question_id in json_data:
+                            # 确保ans结构存在
+                            if "ans" not in json_data[question_id]:
+                                json_data[question_id]["ans"] = {}
+                            if "llama-3-2" not in json_data[question_id]["ans"]:
+                                json_data[question_id]["ans"]["llama-3-2"] = {"text": ""}
+                                
+                            # 替换响应内容
+                            json_data[question_id]["ans"]["llama-3-2"]["text"] = response.content
+
+                    question_id = int(question_id)
+                    question_id = question_id + 1
+
+                    responses.append(output)
+
+            # 保存更新后的JSON数据
+            with open(json_path, 'w', encoding='utf-8') as f:
+                json.dump(json_data, f, indent=4, ensure_ascii=False)
+
+            return responses
 
     def pipeline(self) -> None:
         self.follow_dataset = self.get_dataset(follow_rules=True,long_pipe = True, danger=None)
@@ -150,10 +216,10 @@ class BaseTask(ABC):
         self.follow_model = self.get_model(follow_rules=True)
         print("Start safety-aware rationale generating....")
         danger = self.generate(follow_dataloader, **self.generation_kwargs)
-        breakpoint()
+        #breakpoint()
         print("Safety-aware rationale generation end, start reasoning...")
-        self.follow_rules == False
-        self.reason_dataset = self.get_dataset(follow_rules=False,danger=danger)
+        self.follow_rules = False
+        self.reason_dataset = self.get_dataset(follow_rules=False,long_pipe = True,danger=danger)
         self.reason_model = self.get_model(follow_rules=False)
         reason_dataloader = self.get_dataloader(self.reason_dataset)
         final_responses = self.generate(reason_dataloader, **self.generation_kwargs)

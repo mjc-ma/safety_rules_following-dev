@@ -10,7 +10,7 @@ import os
 
 class MMSafetyBenchDataset(BaseDataset):
     dataset_ids: Sequence[str] = ["mm-safety-bench"]
-    dataset_categories: str = "01-Illegal_Activity"
+    dataset_categories: str = "13-Gov_Decision"
     dataset_config: Optional[Dict[str, str]] = {
         "mm-safety-bench": "configs/mm-safety-bench.yaml",
     }
