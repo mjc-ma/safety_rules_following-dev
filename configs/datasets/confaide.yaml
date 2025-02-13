@@ -1,0 +1,6 @@
+image_dir: './data/privacy/confaide/imgs'
+
+prompts_path: "./data/privacy/confaide/prompts.txt"
+labels_path: "./data/privacy/confaide/labels.txt"
+
+img_num: 14

@@ -1,0 +1,3 @@
+related_image_dir: './data/robustness/ood-text/related'
+unrelated_image_dir: './data/unrelated_images'
+annotation_file: './data/robustness/ood-text/label.json'

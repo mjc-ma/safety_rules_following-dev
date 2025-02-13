@@ -1,0 +1,2 @@
+image_dir: './data/robustness/ood-artistic/source'
+annotation_dir: './data/robustness/ood-artistic/label'

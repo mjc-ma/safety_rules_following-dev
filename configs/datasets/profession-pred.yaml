@@ -1,0 +1,2 @@
+image_dir: './data/fairness/profession_images'
+anno_dir: './data/fairness/profess_prediction.csv'

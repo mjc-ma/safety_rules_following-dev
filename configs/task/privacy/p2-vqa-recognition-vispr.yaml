@@ -1,0 +1,23 @@
+dataset_id: "vispr-recognition-pri-query"
+model_id: "llava-v1.5-7b"
+log_file: "./logs/privacy/vqa-recognition-vispr.json"
+generation_kwargs: {
+    'max_new_tokens': 50,
+    'do_sample': False,
+}
+
+evaluator_seq_cfgs:
+  [
+    {
+      "rule_yes_or_no_eval":
+        {
+          metrics_cfg:
+            {
+              accuracy_score: {},
+              precision_score: {},
+              recall_score: {},
+              f1_score: {},
+            },
+        },
+    },
+  ]

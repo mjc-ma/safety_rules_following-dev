@@ -1,0 +1,3 @@
+DATA_ROOT: "./data/fairness"
+image_dir: './data/fairness/stereo_images'
+statement_dir: './data/fairness/stereo_statement.csv'

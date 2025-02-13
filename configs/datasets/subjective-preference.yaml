@@ -1,0 +1,2 @@
+image_dir: './data/fairness/subjective_choice_images'
+json_dir: './data/fairness/preference.json'

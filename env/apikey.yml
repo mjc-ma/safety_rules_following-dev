@@ -1,0 +1,9 @@
+anthropic_apikey: ""
+
+# base_url: https://api.claudeshop.top/v1
+# api_key: sk-pAfp2hZbq8virUVnJL6BKtLmXDBvT5BpR2vXdzSEF2pftpL1
+
+openai_apikey: "sk-pAfp2hZbq8virUVnJL6BKtLmXDBvT5BpR2vXdzSEF2pftpL1"
+qwen_apikey: ""
+google_apikey: ""
+perspective_apikey: ""

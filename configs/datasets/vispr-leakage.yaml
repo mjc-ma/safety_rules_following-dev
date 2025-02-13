@@ -1,0 +1,3 @@
+image_dir: ./data/privacy/vispr/categorized
+annotation_file: ./data/privacy/vispr/categorized/image_annotations.json
+

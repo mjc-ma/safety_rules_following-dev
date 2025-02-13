@@ -1,0 +1,2 @@
+image_dir: './data/robustness/ood-sensor/source'
+annotation_dir: './data/robustness/ood-sensor/label'

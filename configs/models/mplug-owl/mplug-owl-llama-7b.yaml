@@ -1,0 +1,7 @@
+model:
+  model_name: 'mplug-owl-llama-7b'
+  model_path: 'MAGAer13/mplug-owl-llama-7b'
+
+parameters:
+  do_sample: False
+

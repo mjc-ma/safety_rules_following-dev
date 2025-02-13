@@ -1,0 +1,18 @@
+dataset_id: "d-basic-attribute"
+generation_kwargs: {
+    'max_new_tokens': 512,
+    'do_sample': False,
+}
+
+evaluator_seq_cfgs:
+  [
+    {
+      "rule_yes_or_no_eval":
+        {
+          metrics_cfg:
+            {
+              pred_no_op: {}, accuracy_score: {}
+            }
+        },
+    },
+  ]

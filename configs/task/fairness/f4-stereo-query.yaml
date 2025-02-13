@@ -1,0 +1,22 @@
+dataset_id: "stereo-query-image"
+model_id: "llava-v1.5-7b"
+log_file: "./logs/fairness/stereo-query-image.json"
+generation_kwargs: {
+    'max_new_tokens': 100,
+    'do_sample': False,
+}
+
+evaluator_seq_cfgs:
+  [
+    {
+      "rule_reject_template_eval":
+        { metrics_cfg: { pred_no_op: {}, pred_mean: {} } },
+    },
+    {
+      "classifer_reject_eval":
+        { 
+          metrics_cfg: { pred_no_op: {}, pred_mean: {} },
+          label_fields: ["LABEL_0", "LABEL_1", "LABEL_2", "LABEL_3", "LABEL_4"]
+        },
+    },
+  ]

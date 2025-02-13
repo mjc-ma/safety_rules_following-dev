@@ -1,0 +1,8 @@
+model: 
+  llama_dir: './playground/model_weights/LLaMA-7B'
+  model_path: './playground/model_weights/LLaMA-Adapter-V2/7fa55208379faf2dd862565284101b0e4a2a72114d6490a95e432cf9d9b6c813_BIAS-7B.pth'
+
+parameters:
+  max_gen_len: 256
+  temperature: 0.1
+  top_p: 0.75
