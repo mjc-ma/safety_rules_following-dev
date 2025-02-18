@@ -1,0 +1,1 @@
+{"gpt4_llama3.2": {"safe": 117, "unsafe": 32, "attack_rate": 0.21476510067114093}, "Qwen2.5_llama3.2": {"safe": 94, "unsafe": 55, "attack_rate": 0.3691275167785235}}

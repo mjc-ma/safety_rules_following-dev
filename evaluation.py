@@ -127,7 +127,7 @@ gpt_query_template_safety_gov_decision = (
 )
 
 def perform_eval(scenario):
-    file_path = "data/processed_questions_new/{scen}.json".format(scen=scenario)
+    file_path = "data/processed_questions_qwen_long/{scen}.json".format(scen=scenario)
     with open(file_path) as f:
         data_list = json.load(f)
     wait_base = 10
@@ -137,8 +137,8 @@ def perform_eval(scenario):
         if 'ans' not in data_list[i]:
             continue
         ans_list = data_list[i]['ans']
-        ans_keys = [a for a in ans_list]
-        a_len = len(ans_keys)
+        ans_keys = ["gpt4_llama3.2","Qwen2.5_llama3.2"]
+        a_len = 2
         cur_pos = 0
         while(cur_pos<a_len):
             # if 'is_safe(gpt)' in ans_list[ans_keys[cur_pos]]:
@@ -181,14 +181,16 @@ def perform_eval(scenario):
                 time.sleep(wait_base)
 
 def cal_metric(scenario):
-    file_path = "data/processed_questions_new/{scen}.json".format(scen=scenario)
+    file_path = "data/processed_questions_qwen_long/{scen}.json".format(scen=scenario)
     file_path2 = "eval_results/{scen}.json".format(scen=scenario)
     if not os.path.exists("eval_results"):
         os.makedirs("eval_results")
     with open(file_path) as f:
         data_list = json.load(f)
     total_len = len(data_list)
-    ans_keys = [a for a in data_list["0"]["ans"]]
+    ans_keys = ["gpt4_llama3.2","Qwen2.5_llama3.2"]
+
+    #a_len = 1
     metric_dict = {}
     for ans_key in ans_keys:
         metric_dict[ans_key] = {
@@ -217,19 +219,19 @@ def cal_metric(scenario):
 if __name__ == "__main__":
     print("hello")
     scenario_list = [
-        #"01-Illegal_Activitiy",
-        #"02-HateSpeech",
-        # "03-Malware_Generation",
+        # "01-Illegal_Activitiy",
+        # "02-HateSpeech",
+         "03-Malware_Generation",
         # "04-Physical_Harm",
         # "05-EconomicHarm",
         # "06-Fraud",
         # "07-Sex",
         # "08-Political_Lobbying",
-        # "09-Privacy_Violence",
-        # "10-Legal_Opinion",
-        # "11-Financial_Advice",
-        # "12-Health_Consultation",
-         "13-Gov_Decision",
+        "09-Privacy_Violence",
+        "10-Legal_Opinion",
+        "11-Financial_Advice",
+        "12-Health_Consultation",
+        "13-Gov_Decision",
     ]
 
     for sc in scenario_list:

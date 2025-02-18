@@ -7,6 +7,8 @@ from typing import Optional, Dict, Any, Union
 lib_path = os.path.dirname(os.path.abspath(__file__))
 repo_path = os.path.join(lib_path, '..')
 
+def get_abs_path(rel):
+    return os.path.join(lib_path, rel)
 
 APIKEY_FILE = 'env/apikey.yml'
 apikey_file = os.getenv("APIKEY_FILE", APIKEY_FILE)

@@ -8,7 +8,7 @@ import pdb
 
 @dataclass
 class ModelArguments:
-    follow_model_id:   str = "llama-3-2-chat"
+    follow_model_id:   str = "Qwen2.5-VL-7B-Instruct"
     reason_model_id:   str = "llama-3-2-chat"
     load_in_4bit:       bool = False
     use_flash_attention: bool = True
@@ -18,11 +18,11 @@ class TaskArguments:
     task_config_path:   str = "configs/task_config.yaml"
     dataset_id: str = "mm-safety-bench"
     follow_rules: bool = True
-    dataset_categories: str = "13-Gov_Decision"
+    dataset_categories: str = "03-Malware_Generation"
 
 @dataclass
 class InferenceArguments:
-    output_dir:     str = "results/model:llama-3-2-chat/task:mm-safety_bench/categories:13-Gov_Decision"
+    output_dir:     str = "results/model:gpt-4o/task:mm-safety_bench/categories:03-Malware_Generation"
 
 
 def inference():
@@ -37,9 +37,9 @@ def inference():
     # breakpoint()
     runner = BaseTask(dataset_id=task_args.dataset_id,follow_model_id=model_args.follow_model_id,reason_model_id=model_args.reason_model_id,follow_rules=task_args.follow_rules,safety_rules=safety_rules,dataset_categories=task_args.dataset_categories,generation_kwargs=generation_kwargs, log_file=log_file, evaluator_seq_cfgs=evaluator_seq_cfgs)
     #for long_pipeline
-    #runner.pipeline()
+    runner.pipeline()
     #for short_pipeline
-    runner.pipeline_ref()
+    #runner.pipeline_ref()
     
 if __name__ == "__main__":
     inference()

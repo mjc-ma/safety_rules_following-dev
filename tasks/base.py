@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 from datasets.base import BaseDataset, collate_fn
 from datasets import datasets as datasets_module
 from models import models as models_module
+from models import models_for_Qwen as models_one
 from models.base import BaseChat
 # from evaluators.base import SequentialEvaluator
 import numpy as np
@@ -15,6 +16,8 @@ cls_mapping = {
     "mm-safety-bench": "MMSafetyBenchDataset",
     "llava-1.5-7b-hf": "LLaVAHFChat",
     "llama-3-2-chat":"LlamaChat",
+    "Qwen2.5-VL-7B-Instruct":"Qwen2Chat",
+    "gpt-4o":"OpenAIChat"
 }
 batch_size = 1
 
@@ -43,7 +46,7 @@ class BaseTask(ABC):
 
     def get_model(self,follow_rules: bool) -> BaseChat:
         if follow_rules == True:
-            model_cls = models_module.__dict__[cls_mapping[self.follow_model_id]]
+            model_cls = models_one.__dict__[cls_mapping[self.follow_model_id]]
             model = model_cls(self.follow_model_id)
         else:
             model_cls = models_module.__dict__[cls_mapping[self.reason_model_id]]
@@ -153,7 +156,7 @@ class BaseTask(ABC):
             print("len(self.dataset): ", len(dataloader.dataset))
             responses = []
             #修改下面的变量
-            json_path = "/mnt/petrelfs/fanyuyu/safety_rules_following-dev/data/processed_questions_new/13-Gov_Decision.json"
+            json_path = "/mnt/petrelfs/fanyuyu/safety_rules_following-dev/data/processed_questions_qwen_long/03-Malware_Generation.json"
             # 加载现有JSON数据
             with open(json_path, 'r', encoding='utf-8') as f:
                 json_data = json.load(f)
@@ -182,6 +185,21 @@ class BaseTask(ABC):
                         "content": message[0]["content"],
                         "response": response.content,
                     }
+                    if flag == 1:
+                        # 更新JSON数据
+                        question_id = str(question_id)
+                        print("aaaaaaaaaaaaaaaaaa")
+                        print(question_id)
+                        print("////////////////")
+                        if question_id in json_data:
+                            # 确保ans结构存在
+                            if "rationale" not in json_data[question_id]:
+                                json_data[question_id]["rationale"] = {}
+                            if "Qwen2.5_llama3.2" not in json_data[question_id]["rationale"]:
+                                json_data[question_id]["rationale"]["Qwen2.5_llama3.2"] = {"reason": ""}
+                                
+                            # 替换响应内容
+                            json_data[question_id]["rationale"]["Qwen2.5_llama3.2"]["reason"] = response.content
 
                     if flag == 0:
                         # 更新JSON数据
@@ -193,11 +211,11 @@ class BaseTask(ABC):
                             # 确保ans结构存在
                             if "ans" not in json_data[question_id]:
                                 json_data[question_id]["ans"] = {}
-                            if "llama-3-2" not in json_data[question_id]["ans"]:
-                                json_data[question_id]["ans"]["llama-3-2"] = {"text": ""}
+                            if "Qwen2.5_llama3.2" not in json_data[question_id]["ans"]:
+                                json_data[question_id]["ans"]["Qwen2.5_llama3.2"] = {"text": ""}
                                 
                             # 替换响应内容
-                            json_data[question_id]["ans"]["llama-3-2"]["text"] = response.content
+                            json_data[question_id]["ans"]["Qwen2.5_llama3.2"]["text"] = response.content
 
                     question_id = int(question_id)
                     question_id = question_id + 1
